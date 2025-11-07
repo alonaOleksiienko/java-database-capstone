@@ -1,61 +1,208 @@
 package com.project.back_end.controllers;
 
+import com.project.back_end.models.Doctor;
+import com.project.back_end.models.Login;
+import com.project.back_end.services.DoctorService;
+import com.project.back_end.services.Service;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * REST Controller managing all doctor-related endpoints:
+ * - Registration, Login, Update, Delete, Filtering, and Availability.
+ * - Secured via role-based token validation.
+ */
+@RestController
+@RequestMapping("${api.path}doctor")
 public class DoctorController {
 
-// 1. Set Up the Controller Class:
-//    - Annotate the class with `@RestController` to define it as a REST controller that serves JSON responses.
-//    - Use `@RequestMapping("${api.path}doctor")` to prefix all endpoints with a configurable API path followed by "doctor".
-//    - This class manages doctor-related functionalities such as registration, login, updates, and availability.
+    @Autowired
+    private DoctorService doctorService;
 
+    @Autowired
+    private Service sharedService;
 
-// 2. Autowire Dependencies:
-//    - Inject `DoctorService` for handling the core logic related to doctors (e.g., CRUD operations, authentication).
-//    - Inject the shared `Service` class for general-purpose features like token validation and filtering.
+    // ===============================================================
+    // 1. Doctor Availability
+    // ===============================================================
 
+    /**
+     * GET /api/doctor/availability/{user}/{doctorId}/{date}/{token}
+     * Check if a doctor is available for a specific date.
+     */
+    @GetMapping("/availability/{user}/{doctorId}/{date}/{token}")
+    public ResponseEntity<Map<String, Object>> getDoctorAvailability(
+            @PathVariable String user,
+            @PathVariable Long doctorId,
+            @PathVariable String date,
+            @PathVariable String token) {
 
-// 3. Define the `getDoctorAvailability` Method:
-//    - Handles HTTP GET requests to check a specific doctor’s availability on a given date.
-//    - Requires `user` type, `doctorId`, `date`, and `token` as path variables.
-//    - First validates the token against the user type.
-//    - If the token is invalid, returns an error response; otherwise, returns the availability status for the doctor.
+        Map<String, Object> response = new HashMap<>();
 
+        if (!sharedService.validateToken(user, token)) {
+            response.put("message", "Invalid or expired token.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
 
-// 4. Define the `getDoctor` Method:
-//    - Handles HTTP GET requests to retrieve a list of all doctors.
-//    - Returns the list within a response map under the key `"doctors"` with HTTP 200 OK status.
+        boolean available = doctorService.isDoctorAvailable(doctorId, date);
+        response.put("doctorId", doctorId);
+        response.put("date", date);
+        response.put("available", available);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
+    // ===============================================================
+    // 2. Retrieve All Doctors
+    // ===============================================================
 
-// 5. Define the `saveDoctor` Method:
-//    - Handles HTTP POST requests to register a new doctor.
-//    - Accepts a validated `Doctor` object in the request body and a token for authorization.
-//    - Validates the token for the `"admin"` role before proceeding.
-//    - If the doctor already exists, returns a conflict response; otherwise, adds the doctor and returns a success message.
+    /**
+     * GET /api/doctor/all
+     * Return a list of all doctors.
+     */
+    @GetMapping("/all")
+    public ResponseEntity<Map<String, Object>> getDoctor() {
+        List<Doctor> doctors = doctorService.getAllDoctors();
+        Map<String, Object> response = new HashMap<>();
+        response.put("doctors", doctors);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
+    // ===============================================================
+    // 3. Register a New Doctor
+    // ===============================================================
 
-// 6. Define the `doctorLogin` Method:
-//    - Handles HTTP POST requests for doctor login.
-//    - Accepts a validated `Login` DTO containing credentials.
-//    - Delegates authentication to the `DoctorService` and returns login status and token information.
+    /**
+     * POST /api/doctor/save/{token}
+     * Register a new doctor (admin-only).
+     */
+    @PostMapping("/save/{token}")
+    public ResponseEntity<Map<String, Object>> saveDoctor(
+            @Valid @RequestBody Doctor doctor,
+            @PathVariable String token) {
 
+        Map<String, Object> response = new HashMap<>();
 
-// 7. Define the `updateDoctor` Method:
-//    - Handles HTTP PUT requests to update an existing doctor's information.
-//    - Accepts a validated `Doctor` object and a token for authorization.
-//    - Token must belong to an `"admin"`.
-//    - If the doctor exists, updates the record and returns success; otherwise, returns not found or error messages.
+        if (!sharedService.validateToken("admin", token)) {
+            response.put("message", "Unauthorized access — only admin can add doctors.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
 
+        if (doctorService.existsByEmail(doctor.getEmail())) {
+            response.put("message", "Doctor with email already exists.");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
 
-// 8. Define the `deleteDoctor` Method:
-//    - Handles HTTP DELETE requests to remove a doctor by ID.
-//    - Requires both doctor ID and an admin token as path variables.
-//    - If the doctor exists, deletes the record and returns a success message; otherwise, responds with a not found or error message.
+        doctorService.saveDoctor(doctor);
+        response.put("message", "Doctor registered successfully.");
+        response.put("doctor", doctor);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
+    // ===============================================================
+    // 4. Doctor Login
+    // ===============================================================
 
-// 9. Define the `filter` Method:
-//    - Handles HTTP GET requests to filter doctors based on name, time, and specialty.
-//    - Accepts `name`, `time`, and `speciality` as path variables.
-//    - Calls the shared `Service` to perform filtering logic and returns matching doctors in the response.
+    /**
+     * POST /api/doctor/login
+     * Authenticate a doctor and return a token.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> doctorLogin(@Valid @RequestBody Login login) {
+        return doctorService.doctorLogin(login);
+    }
 
+    // ===============================================================
+    // 5. Update Doctor
+    // ===============================================================
 
+    /**
+     * PUT /api/doctor/update/{token}
+     * Update an existing doctor's details (admin-only).
+     */
+    @PutMapping("/update/{token}")
+    public ResponseEntity<Map<String, Object>> updateDoctor(
+            @Valid @RequestBody Doctor doctor,
+            @PathVariable String token) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (!sharedService.validateToken("admin", token)) {
+            response.put("message", "Unauthorized access — only admin can update doctors.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!doctorService.existsById(doctor.getId())) {
+            response.put("message", "Doctor not found.");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        doctorService.updateDoctor(doctor);
+        response.put("message", "Doctor updated successfully.");
+        response.put("doctor", doctor);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // ===============================================================
+    // 6. Delete Doctor
+    // ===============================================================
+
+    /**
+     * DELETE /api/doctor/delete/{id}/{token}
+     * Remove a doctor by ID (admin-only).
+     */
+    @DeleteMapping("/delete/{id}/{token}")
+    public ResponseEntity<Map<String, Object>> deleteDoctor(
+            @PathVariable Long id,
+            @PathVariable String token) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (!sharedService.validateToken("admin", token)) {
+            response.put("message", "Unauthorized access — only admin can delete doctors.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!doctorService.existsById(id)) {
+            response.put("message", "Doctor not found.");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        doctorService.deleteDoctor(id);
+        response.put("message", "Doctor deleted successfully.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // ===============================================================
+    // 7. Filter Doctors
+    // ===============================================================
+
+    /**
+     * GET /api/doctor/filter/{name}/{time}/{speciality}
+     * Filter doctors by name, available time, and specialty.
+     */
+    @GetMapping("/filter/{name}/{time}/{speciality}")
+    public ResponseEntity<Map<String, Object>> filterDoctors(
+            @PathVariable String name,
+            @PathVariable String time,
+            @PathVariable String speciality) {
+
+        Map<String, Object> response = new HashMap<>();
+        List<Doctor> doctors = sharedService.filterDoctors(name, time, speciality);
+
+        if (doctors.isEmpty()) {
+            response.put("message", "No doctors found with the given filters.");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        response.put("filteredDoctors", doctors);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
+

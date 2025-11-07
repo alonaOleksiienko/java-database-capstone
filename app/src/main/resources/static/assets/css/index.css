@@ -1,53 +1,123 @@
-/* this is the style sheet file for index.htlm  */
+/* ================================
+   index.css  •  for index.html
+   ================================ */
 
-/* 
-**Global Reset (`*`)**
+/* ---------- Global Reset ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-* Remove all default margin and padding.
-* Use `border-box` for sizing to include padding and border in element size.
+/* ---------- Base ---------- */
+html,
+body {
+  height: 100%;
+  font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+  color: #0b2f2f;
+  background: #e9f7f6;
+}
 
-**Base (`html, body`)**
+/* ---------- Layout Wrapper ---------- */
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-* Set height to 100% for full viewport layout.
-* Use the `'Roboto'` sans-serif font for modern, clean typography.
+/* ---------- Heading ---------- */
+h2 {
+  font-size: 48px;
+  margin-bottom: 50px;
+  color: #003e3e;
+  font-weight: 800;
+  font-family: 'Alegreya', 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+  letter-spacing: 0.3px;
+}
 
-**Layout Wrapper (`.wrapper`)**
+/* ---------- Main Section ---------- */
+.main-content {
+  flex-grow: 1;
+  padding: 40px;
 
-* Use a vertical flexbox layout.
-* Ensure the wrapper covers at least the full height of the screen (`min-height: 100vh`).
+  /* center content */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 
-**Heading (`h2`)**
+  /* background image (replace URL if needed) */
+  background-image: url('/assets/images/hero/clinic-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 
-* Set a large font size (`48px`) for prominence.
-* Add a bottom margin of `50px` for spacing.
-* Use a dark teal color (`#003e3e`).
-* Make the font bold and use a blended font stack (`'Alegreya', 'Roboto', sans-serif`) for elegant styling.
+  /* soft overlay to improve text contrast */
+  position: relative;
+}
+.main-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.45);
+}
+.main-content > * {
+  position: relative; /* keeps children above overlay */
+}
 
-**Main Section (`.main-content`)**
+/* ---------- Buttons (base) ---------- */
+button,
+.button {
+  background: #015c5d;     /* teal green */
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  width: 200px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background-color 160ms ease, transform 120ms ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+button:focus-visible,
+.button:focus-visible {
+  outline: 3px solid #a6e1df;
+  outline-offset: 2px;
+}
+button:hover,
+.button:hover {
+  background: #A62B1F;     /* bold red on hover */
+}
+button:active,
+.button:active {
+  transform: translateY(1px);
+}
 
-* Allow the section to grow to fill space with `flex-grow: 1`.
-* Add `40px` of internal padding.
-* Center content both horizontally and vertically using `justify-content` and `align-items`.
-* Display items in a column direction.
-* Center all text.
-* Apply a full-screen background image with:
+/* ---------- Dashboard Buttons ---------- */
+.dashboard-btn {
+  background: #015c5d;     /* same base green */
+}
+.dashboard-btn:hover {
+  background: #003e3e;     /* deep teal on hover */
+}
 
-  * `cover` size
-  * `center` positioning
-  * no repeat
-  * `fixed` attachment to keep image still during scroll
+/* optional container for the vertical role buttons */
+.role-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+  width: 220px; /* slightly wider than 200px button to align */
+}
 
-**Buttons (`button`)**
+/* small helper for centered sections without stretching */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-* Style with a teal green background (`#015c5d`) and white text.
-* Remove borders and round the corners (`12px`).
-* Use `10px 20px` padding and set width to `200px`.
-* Add a top margin of `10px` for spacing.
-* Enable pointer cursor and readable font size (`16px`).
-* On hover, change background color to bold red (`#A62B1F`).
-
-**Dashboard Buttons (`.dashboard-btn`)**
-
-* Use the same base green background (`#015c5d`) as the default button.
-* On hover, darken the background to deep teal (`#003e3e`) for visual feedback.
- */

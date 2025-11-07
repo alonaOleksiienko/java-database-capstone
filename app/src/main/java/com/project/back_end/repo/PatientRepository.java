@@ -1,29 +1,33 @@
 package com.project.back_end.repo;
 
-public interface PatientRepository {
-    // 1. Extend JpaRepository:
-//    - The repository extends JpaRepository<Patient, Long>, which provides basic CRUD functionality.
-//    - This allows the repository to perform operations like save, delete, update, and find without needing to implement these methods manually.
-//    - JpaRepository also includes features like pagination and sorting.
+import com.project.back_end.models.Patient;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-// Example: public interface PatientRepository extends JpaRepository<Patient, Long> {}
+/**
+ * Repository interface for Patient entity.
+ * Provides CRUD operations and custom query methods for patient management.
+ */
+@Repository
+public interface PatientRepository extends JpaRepository<Patient, Long> {
 
-// 2. Custom Query Methods:
+    /**
+     * Finds a patient by their email address.
+     *
+     * @param email The patient's email.
+     * @return The Patient entity if found, otherwise null.
+     */
+    Patient findByEmail(String email);
 
-//    - **findByEmail**:
-//      - This method retrieves a Patient by their email address.
-//      - Return type: Patient
-//      - Parameters: String email
-
-//    - **findByEmailOrPhone**:
-//      - This method retrieves a Patient by either their email or phone number, allowing flexibility for the search.
-//      - Return type: Patient
-//      - Parameters: String email, String phone
-
-// 3. @Repository annotation:
-//    - The @Repository annotation marks this interface as a Spring Data JPA repository.
-//    - Spring Data JPA automatically implements this repository, providing the necessary CRUD functionality and custom queries defined in the interface.
-
-
+    /**
+     * Finds a patient by their email or phone number.
+     * Useful for login or duplicate record checks.
+     *
+     * @param email The patient's email.
+     * @param phone The patient's phone number.
+     * @return The Patient entity if found, otherwise null.
+     */
+    Patient findByEmailOrPhone(String email, String phone);
 }
+
 

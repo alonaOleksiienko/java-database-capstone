@@ -1,0 +1,67 @@
+<!-- doctorDashboard.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" th:href="@{/assets/images/logo/logo.png}" />
+  <title>Doctor Dashboard</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" th:href="@{/assets/css/style.css}" />
+  <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}" />
+  <link rel="stylesheet" th:href="@{/assets/css/doctorDashboard.css}" />
+
+  <!-- Common JS -->
+  <script th:src="@{/js/util.js}" defer></script>
+  <script th:src="@{/js/render.js}" defer></script>
+  <script th:src="@{/js/components/header.js}" defer></script>
+  <script th:src="@{/js/components/footer.js}" defer></script>
+
+  <!-- Page logic -->
+  <script type="module" th:src="@{/js/pages/doctorDashboard.js}" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="wrapper">
+      <!-- Header injected by header.js -->
+      <div id="header"></div>
+
+      <div class="main-content">
+        <h2>Doctor Dashboard</h2>
+
+        <!-- Search -->
+        <input
+          type="text"
+          id="searchBar"
+          class="searchBar"
+          placeholder="Search patients by name"
+          autocomplete="off"
+        />
+
+        <!-- Filters -->
+        <div class="filters">
+          <button id="todayButton" class="dashboard-btn">Today</button>
+          <input id="datePicker" type="date" />
+        </div>
+
+        <!-- Appointments table -->
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Patient ID</th>
+              <th>Name</th>
+              <th>Phone No.</th>
+              <th>Email</th>
+              <th>Prescription</th>
+            </tr>
+          </thead>
+          <tbody id="patientTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Footer injected by footer.js -->
+      <div id="footer"></div>
+    </div>
+  </div>
+</body>
+</html>
