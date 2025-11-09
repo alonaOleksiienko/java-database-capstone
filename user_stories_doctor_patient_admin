@@ -1,0 +1,71 @@
+Smart Clinic Management System — User Stories
+Overview
+This document outlines the user stories for the Smart Clinic Management System (Patient Appointment Portal). The system serves three primary roles—Admin, Doctor, and Patient—each interacting with different components of the platform.
+These user stories form the foundation of Agile development for this project. They describe what each user type needs to accomplish and why, providing clear direction for backend and frontend feature development.
+
+1. Admin User Stories
+ID	User Story	Acceptance Criteria
+A1	As an Admin, I want to log in securely using my credentials so that I can access the management dashboard.	- Admin can log in with valid credentials.
+- Invalid credentials show an error message.
+- Successful login redirects to AdminDashboard.
+A2	As an Admin, I want to add and manage doctor accounts so that new doctors can access the system.	- Admin can add, edit, or remove doctor profiles.
+- Data validation prevents duplicates.
+- Confirmation message shown after successful operation.
+A3	As an Admin, I want to view all registered patients and doctors so that I can monitor system activity.	- Dashboard lists all users with pagination.
+- Filters available for active/inactive users.
+- Admin can export data as CSV.
+A4	As an Admin, I want to monitor scheduled appointments so that I can oversee daily operations.	- Calendar or list view of all appointments.
+- Filter by date, doctor, or patient.
+- Real-time update when new appointments are added.
+A5	As an Admin, I want to assign or revoke access to user accounts so that system security is maintained.	- Admin can deactivate or reactivate accounts.
+- System updates access status immediately.
+- Audit log records all changes.
+2. Doctor User Stories
+ID	User Story	Acceptance Criteria
+D1	As a Doctor, I want to log in to my dashboard so that I can manage my appointments and patients.	- Doctor logs in via secure credentials.
+- Redirected to DoctorDashboard.
+- Access restricted to doctor-specific data.
+D2	As a Doctor, I want to set my availability schedule so that patients can book appointments only during available slots.	- Doctor can create/edit time slots.
+- Conflicts with existing appointments are flagged.
+- Availability updates reflect in patient booking view.
+D3	As a Doctor, I want to view my daily and weekly appointments so that I can prepare for upcoming consultations.	- Appointment list or calendar view.
+- Filter by date or patient name.
+- Each appointment includes patient details and reason.
+D4	As a Doctor, I want to update medical notes or prescriptions after a consultation so that patient records remain accurate.	- Doctor can add or edit notes and prescriptions.
+- Data stored in MongoDB (document-based).
+- Patients can view their updated prescriptions.
+D5	As a Doctor, I want to search patient history so that I can review previous diagnoses or prescriptions.	- Search by patient name or ID.
+- Displays prior appointments and treatments.
+- Secure access (doctor sees only own patients).
+3. Patient User Stories
+ID	User Story	Acceptance Criteria
+P1	As a Patient, I want to register for an account so that I can access the appointment portal.	- Patient provides required info (name, email, password).
+- Email validation required.
+- Successful registration sends confirmation email.
+P2	As a Patient, I want to log in securely to my dashboard so that I can view and manage my appointments.	- Secure login with JWT token or session-based auth.
+- Failed attempts show descriptive errors.
+- Redirects to PatientDashboard upon success.
+P3	As a Patient, I want to search and view available doctors so that I can choose the right specialist.	- Search by name, specialty, or location.
+- Displays doctor availability and ratings.
+- Book button enabled only for available slots.
+P4	As a Patient, I want to book, reschedule, or cancel appointments so that I can manage my schedule easily.	- Calendar-based booking system.
+- Email or SMS confirmation on changes.
+- Prevents booking conflicts or expired slots.
+P5	As a Patient, I want to view my medical history and prescriptions so that I can track my health record.	- Displays appointment summaries and prescriptions.
+- Data retrieved from both MySQL (appointments) and MongoDB (prescriptions).
+- Secure access with role-based permissions.
+4. Technical & Non-Functional Stories
+ID	Story	Acceptance Criteria
+T1	As a developer, I want the system to use Spring Boot with MVC and REST so that the architecture supports scalability.	- Thymeleaf used for dashboards.
+- REST APIs for modular integration.
+- Spring Boot configured for dual databases.
+T2	As a developer, I want to integrate both MySQL and MongoDB so that structured and unstructured data are handled efficiently.	- MySQL stores relational data.
+- MongoDB stores prescriptions.
+- Repositories correctly configured for each.
+T3	As a system administrator, I want to deploy the app via Docker so that it can run consistently across environments.	- Dockerfile configured for Spring Boot build.
+- Application runs via docker run or Compose.
+- CI/CD pipeline builds and deploys automatically.
+T4	As a tester, I want to validate REST API endpoints so that data integrity and responses are verified.	- All API endpoints tested using Postman.
+- 2xx success codes on valid requests.
+- Proper error codes for invalid input.
+
