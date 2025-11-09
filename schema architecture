@@ -1,0 +1,35 @@
+Smart Clinic Management System – Architecture Design
+Section 1: Architecture Summary
+The Smart Clinic Management System is a Spring Boot–based web application that integrates both Spring MVC (for Admin and Doctor dashboards) and REST APIs (for appointment and patient modules). The system is designed using a three-tier architecture—Presentation, Application, and Data tiers—ensuring scalability, modularity, and maintainability.
+* Presentation Tier: Handles user interactions through Thymeleaf templates for server-rendered dashboards (Admin and Doctor) and REST API clients (for Appointments, Patient Dashboard, and Patient Records). This allows both traditional web users and external clients (mobile or third-party apps) to access the system.
+* Application Tier: The core of the backend, built with Spring Boot. It includes:
+    * Controllers (MVC + REST) for handling HTTP requests and routing them.
+    * Service Layer for applying business logic, validation, and workflow coordination.
+    * Repository Layer for abstracting database operations.
+* Data Tier: The application interacts with two databases:
+    * MySQL (via Spring Data JPA) for structured, relational data such as patients, doctors, appointments, and admin records.
+    * MongoDB (via Spring Data MongoDB) for flexible, document-based prescription data.
+The architecture allows MVC controllers and REST APIs to coexist in one codebase while maintaining clean separation of concerns. Spring Boot simplifies configuration, enables easy testing, and supports containerized deployment through Docker. This design also aligns with CI/CD practices, making the system cloud-ready and production-friendly.
+
+Section 2: Numbered Flow of Data and Control
+1. User Interface Layer Users interact through either:
+    * Thymeleaf dashboards (AdminDashboard, DoctorDashboard) that render dynamic HTML pages.
+    * REST API clients (such as PatientDashboard and Appointment modules) that communicate via JSON over HTTP.
+2. Controller Layer Requests are routed to:
+    * MVC Controllers → return Thymeleaf templates for server-side rendering.
+    * REST Controllers → process input, call services, and return JSON responses. Controllers validate input and coordinate the flow between frontend and backend.
+3. Service Layer The Service Layer contains the business logic. Controllers delegate all operations here. This layer applies validations (e.g., checking doctor availability before booking) and coordinates multiple repository calls to maintain consistency.
+4. Repository Layer The Service Layer communicates with the Repository Layer, which uses:
+    * Spring Data JPA to manage relational data in MySQL.
+    * Spring Data MongoDB to handle document-based data in MongoDB. Repositories abstract CRUD operations and provide simple declarative access to data.
+5. Database Access
+    * MySQL stores structured data like patients, doctors, appointments, and admin information.
+    * MongoDB stores unstructured or evolving data such as prescriptions. Both databases operate simultaneously, managed by their respective repository interfaces.
+6. Model Binding Data from the databases is mapped to Java objects:
+    * MySQL entities are annotated with @Entity.
+    * MongoDB documents use @Document. These model classes represent data uniformly across the service and controller layers.
+7. Response Generation
+    * In MVC flows, models are passed from controllers to Thymeleaf templates and rendered as HTML in the browser.
+    * In REST flows, models (or DTOs) are serialized into JSON and returned to clients through API responses. This completes the request-response cycle, delivering the final web view or data payload to the user.
+
+
