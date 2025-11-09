@@ -3,7 +3,7 @@ package com.project.back_end.controllers;
 import com.project.back_end.models.Prescription;
 import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.PrescriptionService;
-import com.project_back_end_shared.services.Service; // <-- adjust to your actual shared Service package
+import com.project.back_end_shared.services.Service; // <-- adjust to your actual shared Service package
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

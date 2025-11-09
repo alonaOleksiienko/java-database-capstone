@@ -3,7 +3,7 @@ package com.project.back_end.controllers;
 import com.project.back_end.models.Patient;
 import com.project.back_end.models.dto.Login;
 import com.project.back_end.services.PatientService;
-import com.project_back_end_shared.services.Service; // <-- If your shared service is in a different package, adjust this import.
+import com.project.back_end_shared.services.Service; // <-- If your shared service is in a different package, adjust this import.
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

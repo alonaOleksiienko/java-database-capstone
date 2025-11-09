@@ -2,7 +2,7 @@ package com.project.back_end.services;
 
 import com.project.back_end.repositories.AdminRepository;
 import com.project.back_end.repositories.DoctorRepository;
-import com.project_back_end.repositories.PatientRepository;
+import com.project.back_end.repositories.PatientRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
